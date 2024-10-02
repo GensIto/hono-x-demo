@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Hello World",
+    "description": "This is a test",
+    "path": "/"
+  },
+  {
+    "title": "Hello About",
+    "description": "This is a About",
+    "path": "/about"
+  },
+  {
+    "title": "Hello About About",
+    "description": "This is a About About",
+    "path": "/about/about-about"
+  }
+]

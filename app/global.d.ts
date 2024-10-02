@@ -3,7 +3,7 @@ import {} from "hono";
 type Head = {
   frontmatter: {
     title: string;
-    isClient: boolean;
+    description: string;
   };
 };
 

@@ -10,6 +10,7 @@ import matter from "gray-matter";
 import fs from "fs";
 import path from "path";
 import { glob } from "glob";
+import client from "honox/vite/client";
 
 const extractMetaFromMDX = () => {
   return {
@@ -66,37 +67,51 @@ const extractMetaFromMDX = () => {
 
 const entry = "./app/server.ts";
 
-export default defineConfig({
-  base: "/",
-  build: {
-    outDir: "dist",
-    assetsDir: "static",
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
+export default defineConfig(({ mode }) => {
+  if (mode === "client") {
+    return {
+      base: "/",
+      build: {
+        outDir: "dist",
+        assetsDir: "static",
+        rollupOptions: {
+          input: ["./app/client.ts"],
+          output: {
+            manualChunks: (id) => {
+              if (id.includes("node_modules")) {
+                return "vendor";
+              }
+            },
+            assetFileNames: "static/[name].[ext]",
+            chunkFileNames: "static/[name].js",
+            entryFileNames: "static/[name].js",
+          },
         },
-        assetFileNames: "static/[name].[ext]",
-        chunkFileNames: "static/[name].js",
-        entryFileNames: "static/[name].js",
+        emptyOutDir: false,
       },
-    },
-  },
-  plugins: [
-    honox({
-      devServer: { adapter },
-      client: {
-        input: ["./app/style.css"],
-      },
-    }),
-    mdx({
-      jsxImportSource: "hono/jsx",
-      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
-    }),
-    build(),
-    ssg({ entry }),
-    extractMetaFromMDX(),
-  ],
+      plugins: [
+        client({
+          input: ["./app/style.css", "./app/client.ts"],
+        }),
+      ],
+    };
+  } else {
+    return {
+      plugins: [
+        honox({
+          devServer: { adapter },
+          client: {
+            input: ["./app/style.css"],
+          },
+        }),
+        mdx({
+          jsxImportSource: "hono/jsx",
+          remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+        }),
+        build(),
+        ssg({ entry }),
+        extractMetaFromMDX(),
+      ],
+    };
+  }
 });

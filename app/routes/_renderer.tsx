@@ -16,7 +16,7 @@ export default jsxRenderer(({ children, frontmatter }) => {
         {import.meta.env.PROD ? (
           <script type='module' async src='/static/client.js'></script>
         ) : (
-          <Script src='/app/client.ts' async />
+          <script src='/app/client.ts' async />
         )}
         <Style />
       </head>
